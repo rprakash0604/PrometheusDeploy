@@ -25,6 +25,6 @@ stringData:
       slack_configs:
       - channel: "#alerts"
         send_resolved: true
-        api_url: https://hooks.slack.com/services/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
+        api_url: https://hooks.slack.com/services/id
         title: '{{ if gt (.Alerts.Firing | len) 0 }}CRTICICAL ALERT: {{ end }}{{ if gt (.Alerts.Resolved | len) 0 }}RESOLVED: {{ end }}{{ .GroupLabels.alertname }}'
         text: "{{ range .Alerts }}{{ .Annotations.env }}\n{{ .Annotations.application }}\n{{ .Annotations.message }}\n{{ end }}"
