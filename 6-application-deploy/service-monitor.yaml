@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: receipts-submitter-ms
+  labels:
+    team: ticketingreceipts
+spec:
+  endpoints:
+  - port: http-api
+    interval: 5s
+    path: /actuator/customprometheus
+  namespaceSelector:
+    matchNames:
+    - 'qa'
+  selector:
+    matchLabels:
+      app: receipts-submitter-ms

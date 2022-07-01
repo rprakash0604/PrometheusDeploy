@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-slack
+  namespace: monitoring
+type: Opaque
+stringData:
+  alertmanager.yaml: |-
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by:
+      - cluster
+      - alertname
+      group_wait: 30s
+      group_interval: 1m
+      repeat_interval: 1m
+      receiver: slack-notifications
+      routes:
+      - receiver: slack-notifications
+        match:
+          severity: critical
+    receivers:
+    - name: slack-notifications
+      slack_configs:
+      - channel: "#alerts"
+        send_resolved: true
+        api_url: https://hooks.slack.com/services/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
+        title: '{{ if gt (.Alerts.Firing | len) 0 }}CRTICICAL ALERT: {{ end }}{{ if gt (.Alerts.Resolved | len) 0 }}RESOLVED: {{ end }}{{ .GroupLabels.alertname }}'
+        text: "{{ range .Alerts }}{{ .Annotations.env }}\n{{ .Annotations.application }}\n{{ .Annotations.message }}\n{{ end }}"

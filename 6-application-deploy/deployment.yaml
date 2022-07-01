@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: receipts-submitter-ms
+  annotations:
+    kubernetes.io/change-cause: azure-devops-manual
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iks-stage-blue-wdc-receipts-submitter-ms
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        archerid: "0187635"
+        componentid: "c600"
+        env: stage-blue-wdc
+        version: 0.1.221722
+      labels:
+        app: iks-stage-blue-wdc-receipts-submitter-ms
+        templateVersion: v2
+        releaseName: 0.1.221722-3
+    spec:
+      containers:
+        - image: ravi6490/docker-learning-prometheus:v3
+          name: stage-blue-wdc-receipts-submitter-ms
+          ports:
+            - name: http-api
+              containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: receipts-submitter-ms
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http-api
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http-api
+            failureThreshold: 3
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 50m
+              memory: 768Mi
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "/bin/sh", "-c", "sleep 30" ]
+      terminationGracePeriodSeconds: 120

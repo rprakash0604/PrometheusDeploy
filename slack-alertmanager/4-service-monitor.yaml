@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: alertmanager
+  namespace: monitoring
+  labels:
+    team: ticketingreceipts
+spec:
+  endpoints:
+  - interval: 5s
+    port: web
+    scrapeTimeout: 5s
+  namespaceSelector:
+    matchNames:
+    - monitoring
+  selector:
+    matchLabels:
+      operated-alertmanager: "true"

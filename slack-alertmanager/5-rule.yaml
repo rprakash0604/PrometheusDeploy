@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: general
+  namespace: monitoring
+  labels:
+    team: ticketingreceipts
+spec:
+  groups:
+  - name: general
+    rules:
+    - alert: TargetDown
+      annotations:
+        env: 'QA'
+        description: 'Application name: {{ $labels.job }}'
+        message: '{{ $value }}% of the {{ $labels.job }} targets are down.'
+      expr: 100 * (count(up == 0) BY (job) / count(up) BY (job)) > 10
+      for: 1m
+      labels:
+        severity: critical
+    - alert: QueueSizeIncreasing
+      annotations:
+        env: 'Env: QA'
+        application: 'Application name: {{ $labels.job }}'
+        message: 'Issue: Queue size is more than 1000'
+      expr: topk(1,submitter_queue_message_count) > 1000
+      for: 1m
+      labels:
+        severity: critical

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: receipts-submitter-ms
+#  namespace: demo
+  resourceVersion: "001"
+  uid: b4952dc3-d670-11e5-8cd0-68f728db1985
+data:
+    server.port: '80'
+    spring.profiles.active: qa
